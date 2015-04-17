@@ -19,18 +19,26 @@ def get_text(txt, start, end, citations):
     staging = [s for s in citations if span_contains(span, s)]
 
     # Calculate the ranges to include
-    indices = [span[0]]
-    for s in staging: indices.extend((s[0]-1, s[1]+1))
-    indices.append(span[1]+1)
 
-    ranges = [(indices[i-1], indices[i]) for i in xrange(1,len(indices), 2)]
+    for s in staging:
+        s = list(s)
+        snippet = txt[s[0]:s[1]]
 
-    # Return the filtered string
-    return ''.join(txt[r[0]:r[1]] for r in ranges)
+        if snippet[0] != '[':
+            if txt[s[0]-1] == '[':
+                s[0] -= 1
+
+        if snippet[-1] != ']':
+            if txt[s[1]] == ']':
+                s[1] += 1
+
+        txt = txt[:s[0]] + ' ' * (s[1] - s[0]) + txt[s[1]:]
+
+    return txt[start:end+1]
 
 def parse_args():
     parser = argparse.ArgumentParser(description='parse nxml file and dump sections')
-    parser.add_argument('--no-xref', action='store_true', help='replace citations with spaces')
+    parser.add_argument('--no-xref', action='store_true', dest='no_xref', help='replace citations with spaces')
     parser.add_argument('--no-header', dest='header', action='store_false', help="don't include column header")
     parser.add_argument('textfile', help='text file')
     parser.add_argument('standoff', help='standoff file')
@@ -57,16 +65,17 @@ if __name__ == '__main__':
     # Compute the spans of the citations to remove them from the text
     citations = []
 
-    for line in (s for s in soff if s.split('\t', 2)[1].split()[0] in remove):
-        # Parse the line
-        _, t_r, __ = line.split('\t', 2)
+    if args.no_xref:
+        for line in (s for s in soff if s.split('\t', 2)[1].split()[0] in remove):
+            # Parse the line
+            _, t_r, __ = line.split('\t', 2)
 
-        _, start, end = t_r.split(' ')
+            _, start, end = t_r.split(' ')
 
-        start, end = int(start), int(end)
+            start, end = int(start), int(end)
 
-        if start != end:
-            citations.append((start, end))
+            if start != end:
+                citations.append((start, end))
 
     # Keep only the lines that correspond to a tag in 'keep'
     entries = (s for s in soff if s.split('\t', 2)[1].split()[0] in keep)
