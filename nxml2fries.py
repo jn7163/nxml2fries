@@ -38,7 +38,7 @@ def get_text(txt, start, end, citations):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='parse nxml file and dump sections')
-    parser.add_argument('--no-xref', action='store_true', dest='no_xref', help='replace citations with spaces')
+    parser.add_argument('--no-citations', action='store_true', dest='no_citations', help='replace citations with spaces')
     parser.add_argument('--no-header', dest='header', action='store_false', help="don't include column header")
     parser.add_argument('textfile', help='text file')
     parser.add_argument('standoff', help='standoff file')
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # Compute the spans of the citations to remove them from the text
     citations = []
 
-    if args.no_xref:
+    if args.no_citations:
         for line in (s for s in soff if s.split('\t', 2)[1].split()[0] in remove):
             # Parse the line
             _, t_r, __ = line.split('\t', 2)

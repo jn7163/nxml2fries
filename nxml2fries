@@ -1,6 +1,17 @@
 #!/bin/sh
 # This script implements the pipelie of nxml2txt
 
+# if [ "$#" -eq 1 ]; then
+#   echo "Processes an nxml file and generates the FRIES format"
+#   echo "Usage: $0 [--no-citations] arg1 ... argN"
+# fi
+
+if [ $1 == "--no-citations" ]; then
+  echo "Removing citations"
+  flags="--no-citations"
+  shift
+fi
+
 for FILE in $@; do
   echo "Working on $FILE"
   NAME=${FILE%.*} # Remove the extension of the nxml file
@@ -8,5 +19,5 @@ for FILE in $@; do
   # Call nxml2txt
   nxml2txt $FILE $NAME.txt $NAME.so
   # Call nxml2fries
-  python nxml2fries.py --no-xref  $NAME.txt $NAME.so > ${NAME}_fries.txt
+  python nxml2fries.py $flags  $NAME.txt $NAME.so > ${NAME}_fries.txt
 done
