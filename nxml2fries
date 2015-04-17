@@ -9,6 +9,4 @@ for FILE in $@; do
   nxml2txt $FILE $NAME.txt $NAME.so
   # Call nxml2fries
   python nxml2fries.py $NAME.txt $NAME.so > ${NAME}_fries.txt
-  # Remove original stand off
-  rm $NAME.so
 done
