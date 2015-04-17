@@ -19,5 +19,5 @@ for FILE in $@; do
   # Call nxml2txt
   nxml2txt $FILE $NAME.txt $NAME.so
   # Call nxml2fries
-  python nxml2fries.py $flags  $NAME.txt $NAME.so > ${NAME}_fries.txt
+  python nxml2fries.py $flags  $NAME.txt $NAME.so > ${NAME}_fries.tsv
 done
