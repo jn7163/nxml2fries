@@ -1,7 +1,6 @@
 ''' This script generates a fries standoff file format by building on top of
 nxml2txt output'''
 
-import sys
 import argparse
 import itertools as it
 
@@ -32,6 +31,7 @@ def get_text(txt, start, end, citations):
 def parse_args():
     parser = argparse.ArgumentParser(description='parse nxml file and dump sections')
     parser.add_argument('--no-xref', action='store_true', help='replace citations with spaces')
+    parser.add_argument('--no-header', dest='header', action='store_false', help="don't include column header")
     parser.add_argument('textfile', help='text file')
     parser.add_argument('standoff', help='standoff file')
     return parser.parse_args()
@@ -46,6 +46,10 @@ if __name__ == '__main__':
     # Read the standoff file
     with open(args.standoff) as f:
         soff = f.readlines()
+
+    # print column headers if required
+    if args.header:
+        print 'chunk_id\tsection_id\tname\tis_title\ttext'
 
     keep = ('article-title', 'abstract', 'sec', 'title', 'fig', 'p', 'supplementary-material')
     remove = ('xref')
