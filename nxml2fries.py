@@ -12,8 +12,8 @@ def span_contains(parent, child):
     return True if parent[0] <= child[0] and parent[1] >= 1 else False
 
 # Read the text file
-# with open(sys.argv[1]) as f:
-#     txt = f.read()
+with open(sys.argv[1]) as f:
+    txt = f.read()
 
 # Read the standoff file
 with open(sys.argv[2]) as f:
@@ -32,6 +32,8 @@ for ix, e in enumerate(entries):
     # Parse the line
     _, t_r, __, attrs = e.split('\t')
     tag, start, end = t_r.split(' ')
+    start = int(start)
+    end = int(end)
 
     if tag in ('article-title', 'abstract'):
 
@@ -44,7 +46,7 @@ for ix, e in enumerate(entries):
             else:
                 title_seen = True
 
-        print '%i\t%s\t%s\t%i\t%s %s' % (ix, nil, tag, 1 if tag == 'article-title' else 0, start, end)
+        print '%i\t%s\t%s\t%i\t%s' % (ix, nil, tag, 1 if tag == 'article-title' else 0, txt[start:end])
 
     elif tag in ('sec', 'fig', 'supplementary-material'):
         # For our purposes, sections and figures are equivalent
@@ -90,4 +92,4 @@ for ix, e in enumerate(entries):
                     # If there are no more sections in the stack, this element may not be useful information
                     continue
 
-            print '%i\t%s\t%s\t%i\t%s %s' % (ix, sec, sec_norm, 1 if tag == 'title' else 0, start, end)
+            print '%i\t%s\t%s\t%i\t%s' % (ix, sec, sec_norm, 1 if tag == 'title' else 0, txt[start:end])
