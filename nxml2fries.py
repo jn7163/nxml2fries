@@ -59,7 +59,7 @@ if __name__ == '__main__':
     if args.header:
         print 'chunk_id\tsection_id\tname\tis_title\ttext'
 
-    keep = ('article-title', 'abstract', 'sec', 'title', 'fig', 'p', 'supplementary-material')
+    keep = ('article-title', 'abstract', 'sec', 'title', 'fig', 'p', 'supplementary-material', 'ref-list', 'ref')
     remove = ('xref')
 
     # Compute the spans of the citations to remove them from the text
@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
             print '%i\t%s\t%s\t%i\t%s' % (ix, nil, tag, 1 if tag == 'article-title' else 0, get_text(txt, start, end, citations))
 
-        elif tag in ('sec', 'fig', 'supplementary-material'):
+        elif tag in ('sec', 'fig', 'supplementary-material', 'ref-list'):
             # For our purposes, sections and figures are equivalent
 
             # Parse the attributes
@@ -123,6 +123,9 @@ if __name__ == '__main__':
                 sec = 'supm-%i' % sm
                 sec_norm = sec
                 sm += 1
+            elif tag == 'ref-list':
+                sec = 'references'
+                sec_norm = sec
             else:
                 raise Exception("I shouldn't be here")
 
@@ -132,7 +135,7 @@ if __name__ == '__main__':
             # Remember the current span
             current_span = (start, end)
 
-        elif tag in ('title', 'p'):
+        elif tag in ('title', 'p', 'ref'):
 
             # Only if we are in a section or image, otherwise this could be part of the references or metadata
             if len(secs) > 0:
@@ -149,4 +152,9 @@ if __name__ == '__main__':
                         # If there are no more sections in the stack, this element may not be useful information
                         continue
 
-                print '%i\t%s\t%s\t%i\t%s' % (ix, sec, sec_norm, 1 if tag == 'title' else 0, get_text(txt, start, end, citations))
+                text = get_text(txt, start, end, citations)
+
+                if tag == 'ref':
+                    text = text.replace('\n', ' ')
+
+                print '%i\t%s\t%s\t%i\t%s' % (ix, sec, sec_norm, 1 if tag == 'title' else 0, text)
