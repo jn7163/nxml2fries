@@ -9,7 +9,25 @@ nil = 'N/A'
 def span_contains(parent, child):
     ''' Returns wether parent contains child '''
 
-    return True if parent[0] <= child[0] and parent[1] >= 1 else False
+    return True if parent[0] <= child[0] and parent[1] >= child[1] else False
+
+def get_text(txt, start, end, citations):
+    ''' Returns a string with the text within start-end removing all the text within any of the ranges in citations '''
+
+    span = (start, end)
+
+    staging = [s for s in citations if span_contains(span, s)]
+
+    # Calculate the ranges to include
+    indices = [span[0]]
+    for s in staging: indices.extend((s[0]-1, s[1]+1))
+    indices.append(span[1]+1)
+
+    ranges = [(indices[i-1], indices[i]) for i in xrange(1,len(indices), 2)]
+
+    # Return the filtered string
+    return ''.join(txt[r[0]:r[1]] for r in ranges)
+
 
 # Read the text file
 with open(sys.argv[1]) as f:
@@ -20,8 +38,24 @@ with open(sys.argv[2]) as f:
     soff = f.readlines()
 
 keep = ('article-title', 'abstract', 'sec', 'title', 'fig', 'p', 'supplementary-material')
+remove = ('xref')
 
-entries = (s for s in soff if s.split('\t', 2)[1].split()[0] in keep) # Keep only the lines that correspond to a tag in 'keep'
+# Compute the spans of the citations to remove them from the text
+citations = []
+
+for line in (s for s in soff if s.split('\t', 2)[1].split()[0] in remove):
+    # Parse the line
+    _, t_r, __ = line.split('\t', 2)
+
+    _, start, end = t_r.split(' ')
+
+    start, end = int(start), int(end)
+
+    if start != end:
+        citations.append((start, end))
+
+# Keep only the lines that correspond to a tag in 'keep'
+entries = (s for s in soff if s.split('\t', 2)[1].split()[0] in keep)
 
 secs = [] # Stack of sections
 title_seen = False
@@ -46,7 +80,7 @@ for ix, e in enumerate(entries):
             else:
                 title_seen = True
 
-        print '%i\t%s\t%s\t%i\t%s' % (ix, nil, tag, 1 if tag == 'article-title' else 0, txt[start:end])
+        print '%i\t%s\t%s\t%i\t%s' % (ix, nil, tag, 1 if tag == 'article-title' else 0, get_text(txt, start, end, citations))
 
     elif tag in ('sec', 'fig', 'supplementary-material'):
         # For our purposes, sections and figures are equivalent
@@ -92,4 +126,4 @@ for ix, e in enumerate(entries):
                     # If there are no more sections in the stack, this element may not be useful information
                     continue
 
-            print '%i\t%s\t%s\t%i\t%s' % (ix, sec, sec_norm, 1 if tag == 'title' else 0, txt[start:end])
+            print '%i\t%s\t%s\t%i\t%s' % (ix, sec, sec_norm, 1 if tag == 'title' else 0, get_text(txt, start, end, citations))
