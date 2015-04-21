@@ -34,7 +34,11 @@ def get_text(txt, start, end, citations):
 
         txt = txt[:s[0]] + ' ' * (s[1] - s[0]) + txt[s[1]:]
 
-    return txt[start:end+1]
+    # These lines replaces the new-line characters for spaces
+    ret = txt[start:end+1]
+    ret = ret.replace('\n', ' ')
+
+    return ret
 
 def parse_args():
     parser = argparse.ArgumentParser(description='parse nxml file and dump sections')
