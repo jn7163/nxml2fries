@@ -64,7 +64,7 @@ if __name__ == '__main__':
         print 'chunk_id\tsection_id\tname\tis_title\ttext'
 
     keep = ('article-title', 'abstract', 'sec', 'title', 'fig', 'p', 'supplementary-material', 'ref-list', 'ref')
-    remove = ('xref')
+    remove = ('xref',)
 
     # Compute the spans of the citations to remove them from the text
     citations = []
