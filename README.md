@@ -9,7 +9,7 @@
 ## Installation Instructions for Mac
 
 1. Install MacPorts from: https://www.macports.org 
-2. Install python 2.7 and set it as the default python:
+2. Install `python` 2.7 and set it as the default:
 
  ```Shell
  sudo port install python27
@@ -22,7 +22,7 @@
  sudo port install texlive-latex texlive-latex-recommended texlive-latex-extra py-lxml
  ```
 
-4. Install nxml2txt and add the binary to your `$PATH`:
+4. Install `nxml2txt` and add the binary to your `$PATH`:
 
  ```Shell
  git clone https://github.com/spyysalo/nxml2txt.git
