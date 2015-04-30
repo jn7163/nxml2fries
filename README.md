@@ -5,6 +5,37 @@
 ## Requirements
 
  This software assumes a unix-like environment and that you have a working installation of [nxml2txt](https://github.com/spyysalo/nxml2txt) added to your path. Besided that you only need [Python](https://www.python.org).
+ 
+## Installation Instructions for Mac
+
+1. Install MacPorts from: https://www.macports.org 
+2. Install python 2.7 and set it as the default python:
+
+ ```Shell
+ sudo port install python27
+ sudo port select --set python python27
+ ```
+
+3. Install the necessary dependencies for `nxml2txt`:
+
+ ```Shell
+ sudo port install texlive-latex texlive-latex-recommended texlive-latex-extra py-lxml
+ ```
+
+4. Install nxml2txt and add the binary to your `$PATH`:
+
+ ```Shell
+ git clone https://github.com/spyysalo/nxml2txt.git
+ cd nxml2txt
+ chmod 755 nxml2txt nxml2txt.sh
+ export PATH=<PATH WHERE nxml2txt IS INSTALLED>:$PATH
+ ```
+
+5. Install this project:
+
+ ```Shell
+ git clone https://github.com/sistanlp/nxml2fries.git
+ ```
 
 ## Usage
 
