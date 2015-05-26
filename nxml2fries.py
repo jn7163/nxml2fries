@@ -24,12 +24,12 @@ def get_text(txt, start, end, citations):
         s = list(s)
         snippet = txt[s[0]:s[1]]
 
-        if snippet[0] != '[':
-            if txt[s[0]-1] == '[':
+        if not snippet[0] in ('[', '('):
+            if txt[s[0]-1] in ('[', '('):
                 s[0] -= 1
 
-        if snippet[-1] != ']':
-            if txt[s[1]] == ']':
+        if not snippet[-1] in (']', ')'):
+            if txt[s[1]] in (']', ')'):
                 s[1] += 1
 
         txt = txt[:s[0]] + ' ' * (s[1] - s[0]) + txt[s[1]:]
