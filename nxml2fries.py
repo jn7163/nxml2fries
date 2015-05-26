@@ -24,13 +24,22 @@ def get_text(txt, start, end, citations):
         s = list(s)
         snippet = txt[s[0]:s[1]]
 
+        open_parenthesis = False
+
         if not snippet[0] in ('[', '('):
             if txt[s[0]-1] in ('[', '('):
                 s[0] -= 1
+                open_parenthesis = True
 
         if not snippet[-1] in (']', ')'):
             if txt[s[1]] in (']', ')'):
                 s[1] += 1
+            elif open_parenthesis:
+                # This is the case in which we're looking for a matching right bracket
+                for i in xrange(1, len(txt) - s[1]):
+                    if txt[s[1]+i] in (']', ')') and (s[1] + i) < len(txt):
+                        s[1] += i + 1
+                        break
 
         txt = txt[:s[0]] + ' ' * (s[1] - s[0]) + txt[s[1]:]
 
