@@ -32,7 +32,7 @@ def get_text(txt, start, end, citations):
                 open_parenthesis = True
 
         if not snippet[-1] in (']', ')'):
-            if txt[s[1]] in (']', ')'):
+            if s[1] < len(txt) and txt[s[1]] in (']', ')'):
                 s[1] += 1
             elif open_parenthesis:
                 # This is the case in which we're looking for a matching right bracket
